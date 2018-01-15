@@ -9,11 +9,11 @@ import com.paindiary.data.dao.PainEntryDao;
 import com.paindiary.domain.JointUsage;
 import com.paindiary.domain.PainEntry;
 
-@Database(entities = {PainEntry.class, JointUsage.class}, version = 1)
+@Database(entities = {PainEntry.class, JointUsage.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class PainDiaryDatabase extends RoomDatabase {
 
-    public static final String DB_NAME = "paindiary.db";
+    static final String DB_NAME = "paindiary.db";
 
     public static final String PAIN_ENTRIES_TABLE_NAME = "pain_entries";
     public static final String PAIN_ENTRIES_ID_COLUMN = "id";
