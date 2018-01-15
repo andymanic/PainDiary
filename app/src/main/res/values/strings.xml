@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Pain Diary</string>
+    <string name="title_activity_create_pain_entry">Create new entry</string>
+    <string name="title_activity_main2">Main2Activity</string>
+</resources>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:clickable="false"
+    >
+
+    <TextView
+        android:id="@+id/lblTime"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="20:00"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:gravity="center_horizontal"
+        />
+
+    <TextView
+        android:id="@+id/lblLevel"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:text="7"
+        android:textStyle="bold"
+        android:textSize="25dp"
+        android:layout_below="@+id/lblTime"
+        />
+
+    <TextView
+        android:id="@+id/lblAffectedJoints"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:text="Affected joints"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:layout_toRightOf="@+id/lblTime"
+        />
+
+    <TextView
+        android:id="@+id/lblJoints"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@+id/lblTime"
+        android:layout_below="@+id/lblAffectedJoints"
+        android:text="Joints"
+        android:textSize="18dp"
+        />
+
+    <TextView
+        android:id="@+id/lblComments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@+id/lblTime"
+        android:layout_below="@+id/lblJoints"
+        android:drawableRight="@android:drawable/ic_menu_info_details"
+        android:drawablePadding="10dp"
+        android:text="Comment"
+        android:textSize="15dp"
+        android:textStyle="italic"
+        />
+
+</RelativeLayout>

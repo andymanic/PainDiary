@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.paindiary.ViewPainEntriesActivity">
+
+    <!-- dummy element prevents input selection -->
+    <LinearLayout
+        android:id="@+id/dummy"
+        android:orientation="vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_width="0px"
+        android:layout_height="0px"/>
+
+    <!-- actual view -->
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/window"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            >
+
+                <TextView
+                    android:id="@+id/lblMonth"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@+id/btnFilter"
+                    android:text="month"
+                    android:textSize="20dp"
+                    />
+
+                <Button
+                    android:id="@+id/btnFilter"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/lstJoints"
+                    android:text="Filter"
+                    android:ems="5"
+                    android:padding="0dp"
+                    android:enabled="false"
+                    />
+
+                <com.github.sundeepk.compactcalendarview.CompactCalendarView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/calendar"
+                    android:layout_width="match_parent"
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_height="250dp"
+                    android:layout_below="@+id/btnFilter"
+                    app:compactCalendarTargetHeight="250dp"
+                    app:compactCalendarTextSize="18dp"
+                    app:compactCalendarEventIndicatorStyle="small_indicator"
+                    app:compactCalendarCurrentDayIndicatorStyle="no_fill_large_indicator"
+                    app:compactCalendarCurrentDayBackgroundColor="@android:color/darker_gray"
+                    app:compactCalendarCurrentSelectedDayIndicatorStyle="no_fill_large_indicator"
+                    app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorPrimary"
+                    />
+
+            <TextView
+                android:id="@+id/lblEntryCount"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/calendar"
+                android:text="number"
+                android:textSize="20dp"
+                />
+
+            <ListView
+                android:id="@+id/lstEntries"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lblEntryCount"
+                />
+
+        </RelativeLayout>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>
