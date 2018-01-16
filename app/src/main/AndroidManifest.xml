@@ -19,7 +19,8 @@
         </activity>
         <activity android:name=".CreatePainEntryActivity" />
         <activity android:name=".ViewPainEntriesActivity" />
-        <activity android:name=".EditPainEntryActivity"></activity>
+        <activity android:name=".EditPainEntryActivity" />
+        <activity android:name=".GraphedEntries"></activity>
     </application>
 
 </manifest>

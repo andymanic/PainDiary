@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         // Configure UI elements
         configureCreateButton();
         configureViewButton();
+        configureGraphButton();
     }
 
     private void configureCreateButton() {
@@ -49,6 +50,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ViewPainEntriesActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+    private void configureGraphButton() {
+        final Button btn = findViewById(R.id.btnGraph);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), GraphedEntries.class);
                 startActivity(intent);
             }
         });
