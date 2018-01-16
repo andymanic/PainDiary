@@ -27,5 +27,13 @@
             android:text="@string/view_entries"
             />
 
+        <Button
+            android:id="@+id/btnGraph"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/btnView"
+            android:text="@string/view_graphs"
+            />
+
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
