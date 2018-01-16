@@ -64,41 +64,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-    public class ReadJointsUsagesTask extends AsyncTask<Void, Void, List<JointUsage>> {
-
-        @Override
-        protected List<JointUsage> doInBackground(Void... voids) {
-            return JointUsageManager.getInstance().getAll();
-        }
-
-        @Override
-        protected void onPostExecute(List<JointUsage> jointUsages) {
-            super.onPostExecute(jointUsages);
-
-            StringBuilder sb = new StringBuilder();
-            for (JointUsage j : jointUsages) {
-                if (sb.length() > 0)
-                    sb.append("\n");
-                sb.append(j.getDescription() + ": " + j.getCount() + "x");
-            }
-
-            Toast.makeText(getApplicationContext(), sb.toString(), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public class ClearTestDataTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            PainEntryManager.getInstance().deleteAll();
-            JointUsageManager.getInstance().deleteAll();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Toast.makeText(getApplicationContext(), "All data deleted", Toast.LENGTH_SHORT).show();
-        }
-    }
 }
