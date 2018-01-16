@@ -16,7 +16,7 @@
             android:id="@+id/btnCreate"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="Create entry"
+            android:text="@string/create_entry"
             />
 
         <Button
@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_below="@+id/btnCreate"
-            android:text="View entries"
+            android:text="@string/view_entries"
             />
 
     </RelativeLayout>
