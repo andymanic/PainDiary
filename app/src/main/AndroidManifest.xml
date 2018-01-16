@@ -20,7 +20,8 @@
         <activity android:name=".CreatePainEntryActivity" />
         <activity android:name=".ViewPainEntriesActivity" />
         <activity android:name=".EditPainEntryActivity" />
-        <activity android:name=".GraphedEntries"></activity>
+        <activity android:name=".GraphedEntries" />
+        <activity android:name=".GraphedEntriesActivity"></activity>
     </application>
 
 </manifest>
