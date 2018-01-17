@@ -31,4 +31,5 @@ dependencies {
     compile 'android.arch.persistence.room:runtime:1.0.0'
     annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
     compile 'com.github.sundeepk:compact-calendar-view:2.0.2.2'
+    compile 'com.jjoe64:graphview:4.2.1'
 }
