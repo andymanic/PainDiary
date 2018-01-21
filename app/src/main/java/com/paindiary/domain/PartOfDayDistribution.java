@@ -1,11 +1,11 @@
-package com.paindiary.util;
+package com.paindiary.domain;
 
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.paindiary.util.PartOfDay.mapHourToPartOfDay;
+import static com.paindiary.domain.PartOfDay.mapHourToPartOfDay;
 
 public class PartOfDayDistribution {
 
@@ -32,11 +32,11 @@ public class PartOfDayDistribution {
         }
 
         public void add(Date date){
-            PartOfDay day = mapHourToPartOfDay(date);
+            PartOfDay day = PartOfDay.mapHourToPartOfDay(date);
             getDistribution().put(day, getDistribution().get(day) + 1);
         }
         public void subtract(Date date){
-            PartOfDay day = mapHourToPartOfDay(date);
+            PartOfDay day = PartOfDay.mapHourToPartOfDay(date);
             getDistribution().put(day, Math.max(getDistribution().get(day) - 1, 0));
         }
         public PartOfDayDistribution merge(PartOfDayDistribution otherDist){

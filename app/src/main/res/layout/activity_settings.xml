@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.paindiary.Settings">
+    android:layout_height="match_parent">
+    <!--tools:context="com.paindiary.Settings">-->
     <LinearLayout
         android:id="@+id/dummy"
         android:orientation="vertical"
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/setButton"
 
-        android:text="@string/setBtn"
+        android:text="@string/btnSet"
         android:onClick="sendNotification"
         android:layout_below="@+id/lblTitle"
         android:layout_alignParentRight="true"/>

@@ -21,12 +21,5 @@
         <activity android:name=".ViewPainEntriesActivity" />
         <activity android:name=".EditPainEntryActivity" />
         <activity android:name=".GraphedEntriesActivity" />
-        <activity android:name=".Settings"></activity>
-
-        <receiver
-            android:name=".util.AlarmReceiver"
-            android:process=":remote" />
-
-
     </application>
 </manifest>

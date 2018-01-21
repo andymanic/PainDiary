@@ -4,7 +4,7 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="create_entry">Create entry</string>
     <string name="view_entries">View entries</string>
-    <string name="view_graphs">View Graphs</string>
-    <string name="setBtn">Set Notifications</string>
+    <string name="graph_entries">Graph entries</string>
+    <string name="btnSet">Set Notifications</string>
     <string name="view_settings">Settings</string>
 </resources>

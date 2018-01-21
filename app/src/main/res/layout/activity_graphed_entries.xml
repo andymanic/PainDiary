@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,26 +8,70 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            >
+
+            <TextView
+                android:id="@+id/lblPainLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pain level"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                />
+
             <com.jjoe64.graphview.GraphView
                 android:layout_width="match_parent"
                 android:layout_height="200dip"
                 android:id="@+id/painGraph"
+                android:layout_below="@id/lblPainLevel"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
                 />
+
+            <TextView
+                android:id="@+id/lblNumberOfJoints"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Number of joints affected"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_below="@id/painGraph"
+                />
+
             <com.jjoe64.graphview.GraphView
                 android:layout_width="match_parent"
                 android:layout_height="200dip"
                 android:id="@+id/jointsGraph"
-                android:layout_below="@id/painGraph"
+                android:layout_below="@id/lblNumberOfJoints"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
                 />
+
+            <TextView
+                android:id="@+id/lblTimeDistribution"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Time distribution"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_below="@id/jointsGraph"
+                />
+
             <com.jjoe64.graphview.GraphView
                 android:layout_width="match_parent"
                 android:layout_height="200dip"
                 android:id="@+id/barGraph"
-                android:layout_below="@id/jointsGraph"
+                android:layout_below="@id/lblTimeDistribution"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
                 />
+
         </RelativeLayout>
     </ScrollView>
 </android.support.constraint.ConstraintLayout>

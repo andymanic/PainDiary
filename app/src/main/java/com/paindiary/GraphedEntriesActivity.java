@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
@@ -14,15 +15,15 @@ import com.jjoe64.graphview.series.PointsGraphSeries;
 import com.paindiary.application.GraphingManager;
 import com.paindiary.domain.GraphData;
 import com.paindiary.util.DateUtils;
-import com.paindiary.util.PartOfDay;
-import com.paindiary.util.PartOfDayDistribution;
+import com.paindiary.domain.PartOfDay;
+import com.paindiary.domain.PartOfDayDistribution;
 
 import java.util.Date;
 import java.util.List;
 
 public class GraphedEntriesActivity extends AppCompatActivity {
 
-    private static final int MAXDATAPOINTCOUNT = 1000;
+    private static final int MAX_DATAPOINT_COUNT = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,30 +31,24 @@ public class GraphedEntriesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_graphed_entries);
 
         configureGraphs();
-
         fetchLastPainEntries();
-
-
     }
 
 
     private void configureGraphs(){
-        GraphView painGraph = (GraphView) findViewById(R.id.painGraph);
-        GraphView jointGraph = (GraphView) findViewById(R.id.jointsGraph);
-        GraphView barGraph = (GraphView) findViewById(R.id.barGraph);
-
+        GraphView painGraph = findViewById(R.id.painGraph);
+        GraphView jointGraph = findViewById(R.id.jointsGraph);
 
         setupGraphView(painGraph);
         setupGraphView(jointGraph);
-
     }
 
     private void setupGraphView(GraphView graph){
         graph.getViewport().setScalable(true);
+        graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.BOTH);
+        graph.getGridLabelRenderer().setGridColor(Color.LTGRAY);
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(GraphedEntriesActivity.this));
         graph.getGridLabelRenderer().setNumHorizontalLabels(3);
-
-
     }
 
     private void fetchLastPainEntries() {
@@ -68,10 +63,8 @@ public class GraphedEntriesActivity extends AppCompatActivity {
         new GraphedEntriesActivity.GetGraphDataPoints().execute(new GraphedEntriesActivity.GetGraphDataPointParameters(from, DateUtils.addMonth(from)));
     }
     private class GetGraphDataPointParameters {
-
         public Date fromDate;
         public Date untilDate;
-
 
         public GetGraphDataPointParameters(Date fromDate, Date untilDate) {
             this.fromDate = fromDate;
@@ -81,7 +74,6 @@ public class GraphedEntriesActivity extends AppCompatActivity {
     }
 
     private class GetGraphDataPoints extends AsyncTask<GetGraphDataPointParameters, Void, Void> {
-
         private LineGraphSeries<DataPoint> _averagePainSeries;
         private LineGraphSeries<DataPoint> _averageJointSeries;
         private PointsGraphSeries<DataPoint> _painSeries;
@@ -90,6 +82,8 @@ public class GraphedEntriesActivity extends AppCompatActivity {
 
         private Date first;
         private Date last;
+
+        private int maxJoints;
 
         @Override
         protected Void doInBackground(GetGraphDataPointParameters... parameters) {
@@ -114,25 +108,27 @@ public class GraphedEntriesActivity extends AppCompatActivity {
 
             PartOfDayDistribution mergeDist = new PartOfDayDistribution();
 
+            maxJoints = 0;
             for (GraphData gd : dataPoints
                     ) {
                 Date date = gd.getDate();
                 mergeDist.merge(gd.getPartOfDayDist());
 
                 DataPoint avgPainLvl = new DataPoint(date, gd.getAveragePainLevel());
-                _averagePainSeries.appendData(avgPainLvl, true, MAXDATAPOINTCOUNT);
+                _averagePainSeries.appendData(avgPainLvl, true, MAX_DATAPOINT_COUNT);
 
                 DataPoint avgNoJoints = new DataPoint(date, gd.getAverageJountCount());
-                _averageJointSeries.appendData(avgNoJoints, true, MAXDATAPOINTCOUNT);
+                _averageJointSeries.appendData(avgNoJoints, true, MAX_DATAPOINT_COUNT);
 
                 for (Integer p : gd.getLevels() ){
                     DataPoint painLvl = new DataPoint(date, p);
-                    _painSeries.appendData(painLvl, true, MAXDATAPOINTCOUNT);
+                    _painSeries.appendData(painLvl, true, MAX_DATAPOINT_COUNT);
                 }
 
-                for (Integer j : gd.getNumberOfJoints() ){
+                for (Integer j : gd.getNumberOfJoints() ) {
+                    maxJoints = Math.max(maxJoints, j);
                     DataPoint jointCount = new DataPoint(date, j);
-                    _jointSeries.appendData(jointCount, true, MAXDATAPOINTCOUNT);
+                    _jointSeries.appendData(jointCount, true, MAX_DATAPOINT_COUNT);
                 }
             }
 
@@ -151,39 +147,44 @@ public class GraphedEntriesActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void v) {
             super.onPostExecute(v);
-            GraphView painGraph = (GraphView) findViewById(R.id.painGraph);
-            GraphView jointGraph = (GraphView) findViewById(R.id.jointsGraph);
-            GraphView barGraph = (GraphView) findViewById(R.id.barGraph);
+            GraphView painGraph = findViewById(R.id.painGraph);
+            GraphView jointGraph = findViewById(R.id.jointsGraph);
+            GraphView barGraph = findViewById(R.id.barGraph);
 
             painGraph.removeAllSeries();
             jointGraph.removeAllSeries();
             barGraph.removeAllSeries();
 
             painGraph.addSeries(_averagePainSeries);
-            //painGraph.addSeries(_painSeries);
+            painGraph.addSeries(_painSeries);
             jointGraph.addSeries(_averageJointSeries);
-            //jointGraph.addSeries(_jointSeries);
+            jointGraph.addSeries(_jointSeries);
             barGraph.addSeries(_timeOfDayDis);
 
-            setupXDateLabels(painGraph);
-            setupXDateLabels(jointGraph);
-
+            setupLabelIntervals(painGraph, first.getTime(), last.getTime(), 0, 10);
+            setupLabelIntervals(jointGraph, first.getTime(), last.getTime(), 0, maxJoints);
         }
-        private GraphView setupXDateLabels(GraphView graph){
-            graph.getViewport().setMinX(first.getTime());
-            graph.getViewport().setMaxX(last.getTime());
+
+        private GraphView setupLabelIntervals(GraphView graph, long minX, long maxX, long minY, long maxY){
+            graph.getViewport().setMinX(minX);
+            graph.getViewport().setMaxX(maxX);
             graph.getViewport().setXAxisBoundsManual(true);
+
+            graph.getViewport().setMinY(minY);
+            graph.getViewport().setMaxY(maxY);
+            graph.getViewport().setYAxisBoundsManual(true);
+
             return graph;
         }
 
         private LineGraphSeries<DataPoint> formatSeries(LineGraphSeries<DataPoint> series){
             series.setThickness(8);
             series.setDataPointsRadius(10);
-            series.setDrawDataPoints(true);
+            series.setDrawDataPoints(false);
             return series;
         }
         private PointsGraphSeries<DataPoint> formatSeries(PointsGraphSeries<DataPoint> series){
-            series.setSize(10);
+            series.setSize(5);
             return series;
         }
     }

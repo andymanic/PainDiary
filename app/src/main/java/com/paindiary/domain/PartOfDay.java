@@ -1,12 +1,7 @@
-package com.paindiary.util;
+package com.paindiary.domain;
 
 
-import android.widget.Switch;
-
-import java.lang.reflect.ParameterizedType;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public enum PartOfDay {
     EARLY_MORNING(1), //3-7

@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         configureCreateButton();
         configureViewButton();
         configureGraphButton();
-        configureSettingButton();
+        //configureSettingButton();
     }
 
     private void configureCreateButton() {
@@ -65,14 +65,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    private void configureSettingButton() {
-        final Button btn = findViewById(R.id.btnSettings);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), Settings.class);
-                startActivity(intent);
-            }
-        });
-    }
+//    private void configureSettingButton() {
+//        final Button btn = findViewById(R.id.btnSettings);
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(getApplicationContext(), Settings.class);
+//                startActivity(intent);
+//            }
+//        });
+//    }
 }

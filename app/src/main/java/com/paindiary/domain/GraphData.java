@@ -1,15 +1,10 @@
 package com.paindiary.domain;
 
-
 import com.paindiary.util.ListUtils;
-import com.paindiary.util.PartOfDay;
-import com.paindiary.util.PartOfDayDistribution;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.paindiary.util.DateUtils.startOfDay;
 
