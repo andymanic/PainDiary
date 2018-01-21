@@ -18,12 +18,14 @@ import com.paindiary.util.DateUtils;
 import com.paindiary.domain.PartOfDay;
 import com.paindiary.domain.PartOfDayDistribution;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class GraphedEntriesActivity extends AppCompatActivity {
 
     private static final int MAX_DATAPOINT_COUNT = 1000;
+    private static final int DISPLAY_DAYS_COUNT = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +49,8 @@ public class GraphedEntriesActivity extends AppCompatActivity {
         graph.getViewport().setScalable(true);
         graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.BOTH);
         graph.getGridLabelRenderer().setGridColor(Color.LTGRAY);
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(GraphedEntriesActivity.this));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(3);
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(GraphedEntriesActivity.this, new SimpleDateFormat("dd")));
+        //graph.getGridLabelRenderer().setNumHorizontalLabels((DISPLAY_DAYS_COUNT/2)+1);
     }
 
     private void fetchLastPainEntries() {
@@ -101,9 +103,11 @@ public class GraphedEntriesActivity extends AppCompatActivity {
             _painSeries = formatSeries(_painSeries);
             _jointSeries = formatSeries(_jointSeries);
 
-            _painSeries.setColor(Color.rgb(193, 54, 54));
+            //_painSeries.setColor(Color.rgb(193, 54, 54));
+            _painSeries.setColor(Color.BLACK);
             _averagePainSeries.setColor(Color.rgb(193, 54, 54));
-            _jointSeries.setColor(Color.rgb(89, 193, 48));
+            //_jointSeries.setColor(Color.rgb(89, 193, 48));
+            _jointSeries.setColor(Color.BLACK);
             _averageJointSeries.setColor(Color.rgb(89, 193, 48));
 
             PartOfDayDistribution mergeDist = new PartOfDayDistribution();
@@ -161,8 +165,10 @@ public class GraphedEntriesActivity extends AppCompatActivity {
             jointGraph.addSeries(_jointSeries);
             barGraph.addSeries(_timeOfDayDis);
 
-            setupLabelIntervals(painGraph, first.getTime(), last.getTime(), 0, 10);
-            setupLabelIntervals(jointGraph, first.getTime(), last.getTime(), 0, maxJoints);
+            //setupLabelIntervals(painGraph, first.getTime(), last.getTime(), 0, 10);
+            setupLabelIntervals(painGraph, DateUtils.subtractDays(last, DISPLAY_DAYS_COUNT).getTime(), last.getTime(), 0, 10);
+            //setupLabelIntervals(jointGraph, first.getTime(), last.getTime(), 0, maxJoints);
+            setupLabelIntervals(jointGraph, DateUtils.subtractDays(last, DISPLAY_DAYS_COUNT).getTime(), last.getTime(), 0, maxJoints);
         }
 
         private GraphView setupLabelIntervals(GraphView graph, long minX, long maxX, long minY, long maxY){
@@ -179,7 +185,7 @@ public class GraphedEntriesActivity extends AppCompatActivity {
 
         private LineGraphSeries<DataPoint> formatSeries(LineGraphSeries<DataPoint> series){
             series.setThickness(8);
-            series.setDataPointsRadius(10);
+            series.setDataPointsRadius(5);
             series.setDrawDataPoints(false);
             return series;
         }

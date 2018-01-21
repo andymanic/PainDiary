@@ -9,13 +9,42 @@ import java.util.GregorianCalendar;
 public class DateUtils {
 
     public static Date addMonth(Date date) {
+        return addMonths(date, 1);
+    }
+
+    public static Date addMonths(Date date, int count) {
         Calendar c = new GregorianCalendar(date.getYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
-        c.add(Calendar.MONTH, 1);
+        c.add(Calendar.MONTH, count);
         return new Date(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
     }
+
     public static Date subtractMonth(Date date) {
+        return subtractMonths(date, 1);
+    }
+
+    public static Date subtractMonths(Date date, int count) {
         Calendar c = new GregorianCalendar(date.getYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
-        c.add(Calendar.MONTH, -1);
+        c.add(Calendar.MONTH, count * -1);
+        return new Date(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
+    }
+
+    public static Date addDay(Date date) {
+        return addDays(date, 1);
+    }
+
+    public static Date addDays(Date date, int count) {
+        Calendar c = new GregorianCalendar(date.getYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
+        c.add(Calendar.DAY_OF_MONTH, count);
+        return new Date(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
+    }
+
+    public static Date subtractDay(Date date) {
+        return subtractDays(date, 1);
+    }
+
+    public static Date subtractDays(Date date, int count) {
+        Calendar c = new GregorianCalendar(date.getYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
+        c.add(Calendar.DAY_OF_MONTH, count * -1);
         return new Date(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
     }
 
@@ -34,7 +63,4 @@ public class DateUtils {
         c.set(Calendar.SECOND, 0);
         return new Date(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
     }
-
-
-
 }
