@@ -6,31 +6,37 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.CombinedChart;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.CombinedData;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.ScatterData;
+import com.github.mikephil.charting.data.ScatterDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.PointsGraphSeries;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
 import com.paindiary.application.GraphingManager;
 import com.paindiary.domain.GraphData;
 import com.paindiary.domain.PartOfDay;
 import com.paindiary.domain.PartOfDayDistribution;
 import com.paindiary.util.DateUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 public class GraphedEntriesActivity extends AppCompatActivity {
-
-    private static final int MAX_DATAPOINT_COUNT = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +51,78 @@ public class GraphedEntriesActivity extends AppCompatActivity {
     }
 
     private void configurePainLevelChart() {
+        CombinedChart chart = findViewById(R.id.painGraph);
+
+        // hide the description in the bottom
+        chart.setDescription(null);
+
+        // disable axis lines
+        //chart.getXAxis().setDrawGridLines(false);
+        //chart.getAxisLeft().setDrawGridLines(false);
+        //chart.getAxisRight().setDrawGridLines(false);
+
+        // change X-axis labels to string representations of the PartOfDay enum, and place them at the bottom
+        chart.getXAxis().setValueFormatter(new DateXAxisLabelFormatter());
+        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        // we don't need values on the axis since they are being displayed on top of the bars
+        chart.getAxisLeft().setDrawLabels(true);
+        chart.getAxisRight().setDrawLabels(false);
+
+        // we don't need a legend because there is just 1 series inside a column
+        chart.getLegend().setEnabled(true);
+
+        // disable selecting
+        chart.setHighlightPerTapEnabled(false);
+        chart.setHighlightPerDragEnabled(false);
+
+        //Colour settings
+        chart.getXAxis().setGridColor(Color.LTGRAY);
+        chart.getAxisLeft().setGridColor(Color.LTGRAY);
+        chart.getAxisRight().setGridColor(Color.LTGRAY);
+
+        chart.getAxisLeft().setAxisMaximum(10);
+        chart.getAxisRight().setAxisMaximum(10);
+        chart.getAxisLeft().setAxisMinimum(0);
+        chart.getAxisRight().setAxisMinimum(0);
+        chart.getAxisLeft().setGranularity(1);
+        chart.getAxisRight().setGranularity(1);
 
     }
 
     private void configureNumberOfJointsChart() {
+        CombinedChart chart = findViewById(R.id.jointsGraph);
+
+        // hide the description in the bottom
+        chart.setDescription(null);
+
+        // disable axis lines
+        //chart.getXAxis().setDrawGridLines(false);
+        //chart.getAxisLeft().setDrawGridLines(false);
+        //chart.getAxisRight().setDrawGridLines(false);
+
+        // change X-axis labels to string representations of the PartOfDay enum, and place them at the bottom
+        chart.getXAxis().setValueFormatter(new DateXAxisLabelFormatter());
+        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        // we don't need values on the axis since they are being displayed on top of the bars
+        chart.getAxisLeft().setDrawLabels(true);
+        chart.getAxisRight().setDrawLabels(false);
+
+        // we don't need a legend because there is just 1 series inside a column
+        chart.getLegend().setEnabled(true);
+
+        // disable selecting
+        chart.setHighlightPerTapEnabled(false);
+        chart.setHighlightPerDragEnabled(false);
+
+        //Colour settings
+        chart.getXAxis().setGridColor(Color.LTGRAY);
+        chart.getAxisLeft().setGridColor(Color.LTGRAY);
+        chart.getAxisRight().setGridColor(Color.LTGRAY);
+
+        chart.getAxisLeft().setGranularity(1);
+        chart.getAxisRight().setGranularity(1);
 
     }
 
@@ -78,6 +152,7 @@ public class GraphedEntriesActivity extends AppCompatActivity {
         chart.setHighlightPerTapEnabled(false);
         chart.setHighlightFullBarEnabled(false);
         chart.setHighlightPerDragEnabled(false);
+        chart.setTouchEnabled(false);
     }
 
     private void fetchLastPainEntries() {
@@ -103,64 +178,72 @@ public class GraphedEntriesActivity extends AppCompatActivity {
     }
 
     private class GetGraphDataPoints extends AsyncTask<GetGraphDataPointParameters, Void, Void> {
-        private LineGraphSeries<DataPoint> _averagePainSeries;
-        private LineGraphSeries<DataPoint> _averageJointSeries;
-        private PointsGraphSeries<DataPoint> _painSeries;
-        private PointsGraphSeries<DataPoint> _jointSeries;
+        private CombinedData _painData;
+        private CombinedData _jointData;
         private BarData _timeOfDayDistributionData;
-
-        private Date first;
-        private Date last;
-
-        private int maxJoints;
 
         @Override
         protected Void doInBackground(GetGraphDataPointParameters... parameters) {
             GetGraphDataPointParameters params = parameters[0];
             List<GraphData> dataPoints = GraphingManager.getInstance().get(params.fromDate, params.untilDate);
 
-            _averagePainSeries = new LineGraphSeries<>();
-            _averageJointSeries = new LineGraphSeries<>();
-            _painSeries = new PointsGraphSeries<>();
-            _jointSeries = new PointsGraphSeries<>();
+            LineDataSet _averagePainDataSet = new LineDataSet(new ArrayList<Entry>(), "Avg Pain");
+            LineDataSet _averageJointDataSet = new LineDataSet(new ArrayList<Entry>(), "Avg Joint Count");
+            ScatterDataSet _painDataSet = new ScatterDataSet(new ArrayList<Entry>(), "Pain Info");
+            ScatterDataSet _jointDataSet = new ScatterDataSet(new ArrayList<Entry>(), "Joint Info");
 
-            _averagePainSeries = formatSeries(_averagePainSeries);
-            _averageJointSeries = formatSeries(_averageJointSeries);
-            _painSeries = formatSeries(_painSeries);
-            _jointSeries = formatSeries(_jointSeries);
+            int avgColour = Color.rgb( 120, 154, 159);
 
-            //_painSeries.setColor(Color.rgb(193, 54, 54));
-            _painSeries.setColor(Color.BLACK);
-            _averagePainSeries.setColor(Color.rgb(193, 54, 54));
-            //_jointSeries.setColor(Color.rgb(89, 193, 48));
-            _jointSeries.setColor(Color.BLACK);
-            _averageJointSeries.setColor(Color.rgb(89, 193, 48));
+
+            _averageJointDataSet.setLineWidth(4);
+            _averageJointDataSet.setDrawCircles(false);
+            _averagePainDataSet.setDrawCircles(false);
+
+            _averageJointDataSet.setDrawValues(false);
+            _averagePainDataSet.setLineWidth(4);
+
+            _averagePainDataSet.setDrawValues(false);
+            _averageJointDataSet.setColor(avgColour);
+            _averagePainDataSet.setColor(avgColour);
+
+            _painDataSet.setColor(Color.BLACK);
+            _jointDataSet.setColor(Color.BLACK);
+
 
             PartOfDayDistribution mergeDist = new PartOfDayDistribution();
 
-            maxJoints = 0;
+
             for (GraphData gd : dataPoints
                     ) {
-                Date date = gd.getDate();
+                long dateValue = gd.getDate().getTime();
                 mergeDist.merge(gd.getPartOfDayDist());
 
-                DataPoint avgPainLvl = new DataPoint(date, gd.getAveragePainLevel());
-                _averagePainSeries.appendData(avgPainLvl, true, MAX_DATAPOINT_COUNT);
+                Entry avgPainLvl = new Entry(dateValue, (float)gd.getAveragePainLevel());
+                _averagePainDataSet.addEntry(avgPainLvl);
 
-                DataPoint avgNoJoints = new DataPoint(date, gd.getAverageJountCount());
-                _averageJointSeries.appendData(avgNoJoints, true, MAX_DATAPOINT_COUNT);
+                Entry avgNoJoints = new Entry(dateValue, (float)gd.getAverageJountCount());
+                _averageJointDataSet.addEntry(avgNoJoints);
 
                 for (Integer p : gd.getLevels() ){
-                    DataPoint painLvl = new DataPoint(date, p);
-                    _painSeries.appendData(painLvl, true, MAX_DATAPOINT_COUNT);
+                    Entry painLvl = new Entry(dateValue, p);
+                    _painDataSet.addEntry(painLvl);
                 }
 
                 for (Integer j : gd.getNumberOfJoints() ) {
-                    maxJoints = Math.max(maxJoints, j);
-                    DataPoint jointCount = new DataPoint(date, j);
-                    _jointSeries.appendData(jointCount, true, MAX_DATAPOINT_COUNT);
+                    Entry jointCount = new Entry(dateValue, j);
+                    _jointDataSet.addEntry(jointCount);
                 }
             }
+
+            _painData = new CombinedData();
+            _painData.setData(new LineData(Arrays.asList((ILineDataSet) _averagePainDataSet)));
+            _painData.setData(new ScatterData(Arrays.asList((IScatterDataSet) _painDataSet)));
+
+            _jointData = new CombinedData();
+            _jointData.setData(new LineData(Arrays.asList((ILineDataSet) _averageJointDataSet)));
+            _jointData.setData(new ScatterData(Arrays.asList((IScatterDataSet) _jointDataSet)));
+
+
 
             // Generate the time distribution data sets and assign them to the general distribution bar data
             int regularColour = Color.rgb( 120, 154, 159);
@@ -196,31 +279,17 @@ public class GraphedEntriesActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void v) {
             super.onPostExecute(v);
-            GraphView painGraph = findViewById(R.id.painGraph);
-            GraphView jointGraph = findViewById(R.id.jointsGraph);
+            CombinedChart painGraph = findViewById(R.id.painGraph);
+            CombinedChart jointGraph = findViewById(R.id.jointsGraph);
             BarChart barGraph = findViewById(R.id.timeDistribitionGraph);
 
-            painGraph.removeAllSeries();
-            jointGraph.removeAllSeries();
+            painGraph.removeAllViews();
+            jointGraph.removeAllViews();
             barGraph.removeAllViews();
 
-            painGraph.addSeries(_averagePainSeries);
-            painGraph.addSeries(_painSeries);
-            jointGraph.addSeries(_averageJointSeries);
-            jointGraph.addSeries(_jointSeries);
-
+            painGraph.setData(_painData);
+            jointGraph.setData(_jointData);
             barGraph.setData(_timeOfDayDistributionData);
-        }
-
-        private LineGraphSeries<DataPoint> formatSeries(LineGraphSeries<DataPoint> series){
-            series.setThickness(8);
-            series.setDataPointsRadius(5);
-            series.setDrawDataPoints(false);
-            return series;
-        }
-        private PointsGraphSeries<DataPoint> formatSeries(PointsGraphSeries<DataPoint> series){
-            series.setSize(5);
-            return series;
         }
     }
 
@@ -231,6 +300,17 @@ public class GraphedEntriesActivity extends AppCompatActivity {
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
             return PartOfDay.fromValue((int)value).toString();
+        }
+    }
+
+    private class DateXAxisLabelFormatter implements IAxisValueFormatter {
+
+        public DateXAxisLabelFormatter() { }
+
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            Date date = new Date((long)value);
+            return new SimpleDateFormat("dd/MM").format(date);
         }
     }
 }

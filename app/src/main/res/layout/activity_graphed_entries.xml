@@ -25,13 +25,15 @@
                 android:layout_marginBottom="5dp"
                 />
 
-            <com.jjoe64.graphview.GraphView
+            <com.github.mikephil.charting.charts.CombinedChart
                 android:layout_width="match_parent"
                 android:layout_height="200dip"
                 android:id="@+id/painGraph"
                 android:layout_below="@id/lblPainLevel"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 />
 
             <TextView
@@ -44,13 +46,15 @@
                 android:layout_below="@id/painGraph"
                 />
 
-            <com.jjoe64.graphview.GraphView
+            <com.github.mikephil.charting.charts.CombinedChart
                 android:layout_width="match_parent"
                 android:layout_height="200dip"
                 android:id="@+id/jointsGraph"
                 android:layout_below="@id/lblNumberOfJoints"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 />
 
             <TextView
