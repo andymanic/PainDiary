@@ -13,26 +13,46 @@ public enum PartOfDay {
 
     private final int _value;
     public int getValue() {return _value;}
+
     PartOfDay(int value){_value = value;}
+
+    public static PartOfDay fromValue(int value) {
+        switch (value) {
+            case 1:
+                return EARLY_MORNING;
+            case 2:
+                return MORNING;
+            case 3:
+                return MIDDAY;
+            case 4:
+                return AFTERNOON;
+            case 5:
+                return EVENING;
+            case 6:
+                return NIGHT;
+            default:
+                throw new IllegalArgumentException("There is no enum value: " + value);
+        }
+    }
 
     @Override
     public String toString(){
         switch(this){
 
             case EARLY_MORNING:
-                return "3-7";
+                return "03 > 07";
             case MORNING:
-                return "7-11";
+                return "07 > 11";
             case MIDDAY:
-                return "11-15";
+                return "11 > 15";
             case AFTERNOON:
-                return "15-19";
+                return "15 > 19";
             case EVENING:
-                return "19-23";
+                return "19 > 23";
             case NIGHT:
-                return "23-3";
+                return "23 > 03";
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("There is no enum value: " + this);
         }
     }
 

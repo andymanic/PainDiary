@@ -2,55 +2,82 @@ package com.paindiary;
 
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GridLabelRenderer;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
-import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 import com.paindiary.application.GraphingManager;
 import com.paindiary.domain.GraphData;
-import com.paindiary.util.DateUtils;
 import com.paindiary.domain.PartOfDay;
 import com.paindiary.domain.PartOfDayDistribution;
+import com.paindiary.util.DateUtils;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 public class GraphedEntriesActivity extends AppCompatActivity {
 
     private static final int MAX_DATAPOINT_COUNT = 1000;
-    private static final int DISPLAY_DAYS_COUNT = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graphed_entries);
 
-        configureGraphs();
+        configurePainLevelChart();
+        configureNumberOfJointsChart();
+        configureTimeDistributionChart();
+
         fetchLastPainEntries();
     }
 
+    private void configurePainLevelChart() {
 
-    private void configureGraphs(){
-        GraphView painGraph = findViewById(R.id.painGraph);
-        GraphView jointGraph = findViewById(R.id.jointsGraph);
-
-        setupGraphView(painGraph);
-        setupGraphView(jointGraph);
     }
 
-    private void setupGraphView(GraphView graph){
-        graph.getViewport().setScalable(true);
-        graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.BOTH);
-        graph.getGridLabelRenderer().setGridColor(Color.LTGRAY);
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(GraphedEntriesActivity.this, new SimpleDateFormat("dd")));
-        //graph.getGridLabelRenderer().setNumHorizontalLabels((DISPLAY_DAYS_COUNT/2)+1);
+    private void configureNumberOfJointsChart() {
+
+    }
+
+    private void configureTimeDistributionChart() {
+        BarChart chart = findViewById(R.id.timeDistribitionGraph);
+
+        // hide the description in the bottom
+        chart.setDescription(null);
+
+        // disable axis lines
+        chart.getXAxis().setDrawGridLines(false);
+        chart.getAxisLeft().setDrawGridLines(false);
+        chart.getAxisRight().setDrawGridLines(false);
+
+        // change X-axis labels to string representations of the PartOfDay enum, and place them at the bottom
+        chart.getXAxis().setValueFormatter(new TimeDistributionXAxisLabelFormatter());
+        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        // we don't need values on the axis since they are being displayed on top of the bars
+        chart.getAxisLeft().setDrawLabels(false);
+        chart.getAxisRight().setDrawLabels(false);
+
+        // we don't need a legend because there is just 1 series inside a column
+        chart.getLegend().setEnabled(false);
+
+        // disable selecting
+        chart.setHighlightPerTapEnabled(false);
+        chart.setHighlightFullBarEnabled(false);
+        chart.setHighlightPerDragEnabled(false);
     }
 
     private void fetchLastPainEntries() {
@@ -80,7 +107,7 @@ public class GraphedEntriesActivity extends AppCompatActivity {
         private LineGraphSeries<DataPoint> _averageJointSeries;
         private PointsGraphSeries<DataPoint> _painSeries;
         private PointsGraphSeries<DataPoint> _jointSeries;
-        private BarGraphSeries<DataPoint> _timeOfDayDis;
+        private BarData _timeOfDayDistributionData;
 
         private Date first;
         private Date last;
@@ -96,7 +123,6 @@ public class GraphedEntriesActivity extends AppCompatActivity {
             _averageJointSeries = new LineGraphSeries<>();
             _painSeries = new PointsGraphSeries<>();
             _jointSeries = new PointsGraphSeries<>();
-            _timeOfDayDis = new BarGraphSeries<>();
 
             _averagePainSeries = formatSeries(_averagePainSeries);
             _averageJointSeries = formatSeries(_averageJointSeries);
@@ -136,15 +162,34 @@ public class GraphedEntriesActivity extends AppCompatActivity {
                 }
             }
 
-            for (PartOfDay pod: PartOfDay.values()
-                    ) {
-                int y = mergeDist.getValue(pod);
-                DataPoint painDist = new DataPoint(pod.getValue(), y);
-                _timeOfDayDis.appendData(painDist, true, 6);
+            // Generate the time distribution data sets and assign them to the general distribution bar data
+            int regularColour = Color.rgb( 120, 154, 159);
+            int highColour = Color.rgb( 210, 54, 65 );
+            int lowColour = Color.rgb(65, 146, 75 );
+
+            List<PartOfDay> highParts = mergeDist.getPartsOfDayWithHighestValue();
+            List<PartOfDay> lowParts = mergeDist.getPartsOfDayWithLowestValue();
+
+            List<IBarDataSet> barDataSets = new ArrayList<>();
+
+            for (PartOfDay pod: PartOfDay.values()) {
+                BarDataSet ds = new BarDataSet(
+                        Arrays.asList(new BarEntry(pod.getValue(), mergeDist.getValue(pod))), // Only accepts a list even though we have just 1 element... used Arrays.asList with a single element array to work around this
+                        pod.toString()
+                );
+
+                if(highParts.contains(pod))
+                    ds.setColor(highColour);
+                else if(lowParts.contains(pod))
+                    ds.setColor(lowColour);
+                else
+                    ds.setColor(regularColour);
+
+                barDataSets.add(ds);
             }
 
-            first = dataPoints.get(0).getDate();
-            last = dataPoints.get(dataPoints.size() - 1).getDate();
+            _timeOfDayDistributionData = new BarData(barDataSets);
+
             return null;
         }
 
@@ -153,34 +198,18 @@ public class GraphedEntriesActivity extends AppCompatActivity {
             super.onPostExecute(v);
             GraphView painGraph = findViewById(R.id.painGraph);
             GraphView jointGraph = findViewById(R.id.jointsGraph);
-            GraphView barGraph = findViewById(R.id.barGraph);
+            BarChart barGraph = findViewById(R.id.timeDistribitionGraph);
 
             painGraph.removeAllSeries();
             jointGraph.removeAllSeries();
-            barGraph.removeAllSeries();
+            barGraph.removeAllViews();
 
             painGraph.addSeries(_averagePainSeries);
             painGraph.addSeries(_painSeries);
             jointGraph.addSeries(_averageJointSeries);
             jointGraph.addSeries(_jointSeries);
-            barGraph.addSeries(_timeOfDayDis);
 
-            //setupLabelIntervals(painGraph, first.getTime(), last.getTime(), 0, 10);
-            setupLabelIntervals(painGraph, DateUtils.subtractDays(last, DISPLAY_DAYS_COUNT).getTime(), last.getTime(), 0, 10);
-            //setupLabelIntervals(jointGraph, first.getTime(), last.getTime(), 0, maxJoints);
-            setupLabelIntervals(jointGraph, DateUtils.subtractDays(last, DISPLAY_DAYS_COUNT).getTime(), last.getTime(), 0, maxJoints);
-        }
-
-        private GraphView setupLabelIntervals(GraphView graph, long minX, long maxX, long minY, long maxY){
-            graph.getViewport().setMinX(minX);
-            graph.getViewport().setMaxX(maxX);
-            graph.getViewport().setXAxisBoundsManual(true);
-
-            graph.getViewport().setMinY(minY);
-            graph.getViewport().setMaxY(maxY);
-            graph.getViewport().setYAxisBoundsManual(true);
-
-            return graph;
+            barGraph.setData(_timeOfDayDistributionData);
         }
 
         private LineGraphSeries<DataPoint> formatSeries(LineGraphSeries<DataPoint> series){
@@ -192,6 +221,16 @@ public class GraphedEntriesActivity extends AppCompatActivity {
         private PointsGraphSeries<DataPoint> formatSeries(PointsGraphSeries<DataPoint> series){
             series.setSize(5);
             return series;
+        }
+    }
+
+    private class TimeDistributionXAxisLabelFormatter implements IAxisValueFormatter {
+
+        public TimeDistributionXAxisLabelFormatter() { }
+
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            return PartOfDay.fromValue((int)value).toString();
         }
     }
 }
