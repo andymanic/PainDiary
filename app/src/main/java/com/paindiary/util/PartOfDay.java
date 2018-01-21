@@ -9,12 +9,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum PartOfDay {
-    EARLY_MORNING, //3-7
-    MORNING, //7-11
-    MIDDAY, //11-15
-    AFTERNOON, //15-19
-    EVENING, //19-23
-    NIGHT; //23-3
+    EARLY_MORNING(1), //3-7
+    MORNING(2), //7-11
+    MIDDAY(3), //11-15
+    AFTERNOON(4), //15-19
+    EVENING(5), //19-23
+    NIGHT(6); //23-3
+
+    private final int _value;
+    public int getValue() {return _value;}
+    PartOfDay(int value){_value = value;}
 
     @Override
     public String toString(){
@@ -55,12 +59,6 @@ public enum PartOfDay {
     public static PartOfDay mapHourToPartOfDay (Date date){
         return mapHourToPartOfDay(date.getHours());
     }
-
-
-
-
-
-
 }
 
 

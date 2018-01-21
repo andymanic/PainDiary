@@ -1,11 +1,14 @@
 package com.paindiary.application;
 
 
+import com.jjoe64.graphview.GraphView;
 import com.paindiary.domain.GraphData;
 import com.paindiary.domain.PainEntry;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +32,7 @@ public class GraphingManager {
    public List<GraphData> get(Date fromDate, Date untilDate){ return get(fromDate, untilDate, 0); }
    public List<GraphData> get(Date fromDate, Date untilDate, int minLevel)
    {
+
        List<PainEntry> entries = PainEntryManager.getInstance().getAll(fromDate, untilDate, minLevel);
        Map<String, GraphData> dataPoints = new HashMap<>();
 
@@ -49,11 +53,18 @@ public class GraphingManager {
            else
            {
                g = dataPoints.get(keyDate);
+
            }
            g.addEntry(painLevel, jointCount, date);
 
        }
 
-       return new ArrayList<GraphData>(dataPoints.values());
+       List<GraphData> graphList = new ArrayList<GraphData>(dataPoints.values());
+       Collections.sort(graphList, new Comparator<GraphData>() {
+           public int compare(GraphData obj1, GraphData obj2) {
+               return obj1.getDate().compareTo(obj2.getDate());
+           }
+       });
+       return graphList;
    }
 }

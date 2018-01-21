@@ -6,9 +6,29 @@
     android:layout_height="match_parent"
     tools:context="com.paindiary.GraphedEntriesActivity">
 
-    <com.jjoe64.graphview.GraphView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="200dip"
-        android:id="@+id/graph" />
-
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.jjoe64.graphview.GraphView
+                android:layout_width="match_parent"
+                android:layout_height="200dip"
+                android:id="@+id/painGraph"
+                />
+            <com.jjoe64.graphview.GraphView
+                android:layout_width="match_parent"
+                android:layout_height="200dip"
+                android:id="@+id/jointsGraph"
+                android:layout_below="@id/painGraph"
+                />
+            <com.jjoe64.graphview.GraphView
+                android:layout_width="match_parent"
+                android:layout_height="200dip"
+                android:id="@+id/barGraph"
+                android:layout_below="@id/jointsGraph"
+                />
+        </RelativeLayout>
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>
