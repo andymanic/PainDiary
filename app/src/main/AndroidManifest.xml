@@ -20,8 +20,13 @@
         <activity android:name=".CreatePainEntryActivity" />
         <activity android:name=".ViewPainEntriesActivity" />
         <activity android:name=".EditPainEntryActivity" />
-        <activity android:name=".GraphedEntries" />
-        <activity android:name=".GraphedEntriesActivity"></activity>
-    </application>
+        <activity android:name=".GraphedEntriesActivity" />
+        <activity android:name=".Settings"></activity>
 
+        <receiver
+            android:name=".util.AlarmReceiver"
+            android:process=":remote" />
+
+
+    </application>
 </manifest>

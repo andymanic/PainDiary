@@ -1,17 +1,19 @@
 package com.paindiary;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-import com.paindiary.application.PainEntryManager;
-import com.paindiary.domain.PainEntry;
+import com.jjoe64.graphview.series.PointsGraphSeries;
+import com.paindiary.application.GraphingManager;
+import com.paindiary.domain.GraphData;
 import com.paindiary.util.DateUtils;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,64 +31,85 @@ public class GraphedEntriesActivity extends AppCompatActivity {
 
     private void configureDataPoints(){
         Date fromDate = null;
+        fromDate.getMonth();
 
         fetchPainEntriesForMonth(fromDate);
     }
 
     private void createGraph(){
         GraphView graph = (GraphView) findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
-            //Creating the DataPoint array to fill the graph. We need to do this twice as we want 2 series
-        });
-        series.setDrawDataPoints(true);
-        series.setDataPointsRadius(10);
-        series.setThickness(8);
+
 
         graph.getViewport().setScalable(true);
-        graph.addSeries(series);
+        //graph.addSeries(jointSeries);
+        //graph.addSeries(painSeries);
     }
 
     private void fetchPainEntriesForMonth(Date from) {
-        new GraphedEntriesActivity.GetEntriesTask().execute(new GraphedEntriesActivity.GetPainEntriesTaskParameters(from, DateUtils.addMonth(from), 0, ""));
+        new GraphedEntriesActivity.GetGraphDataPoints().execute(new GraphedEntriesActivity.GetGraphDataPointParameters(from, DateUtils.addMonth(from)));
     }
-    private class GetPainEntriesTaskParameters {
+    private class GetGraphDataPointParameters {
 
         public Date fromDate;
         public Date untilDate;
-        public int level;
-        public String joint;
 
-        public GetPainEntriesTaskParameters(Date fromDate, Date untilDate, int level, String joint) {
+
+        public GetGraphDataPointParameters(Date fromDate, Date untilDate) {
             this.fromDate = fromDate;
             this.untilDate = untilDate;
-            this.level = level;
-            this.joint = joint;
+
         }
     }
 
-    private class GetEntriesTask extends AsyncTask<GetPainEntriesTaskParameters, Void, List<PainEntry>> {
+    private class GetGraphDataPoints extends AsyncTask<GetGraphDataPointParameters, Void, List<GraphData>> {
 
         @Override
-        protected List<PainEntry> doInBackground(GetPainEntriesTaskParameters... parameters) {
-            List<PainEntry> results = new ArrayList<>();
-            List<Long> resultIds = new ArrayList<>();
-            for (GetPainEntriesTaskParameters p : parameters) {
-                List<PainEntry> entries = PainEntryManager.getInstance().getAll(p.fromDate, p.untilDate, p.level);
-
-                for (PainEntry e : entries) {
-                    if ((p.joint.isEmpty() || e.hasJoint(p.joint)) && !resultIds.contains(e.getId())) {
-                        results.add(e);
-                        resultIds.add(e.getId());
-                    }
-                }
-            }
-            return results;
+        protected List<GraphData> doInBackground(GetGraphDataPointParameters... parameters) {
+            GetGraphDataPointParameters p = parameters[0];
+            return GraphingManager.getInstance().get(p.fromDate, p.untilDate);
         }
 
         @Override
-        protected void onPostExecute(List<PainEntry> entries) {
-            super.onPostExecute(entries);
-            //TODO
+        protected void onPostExecute(List<GraphData> dataPoints) {
+            super.onPostExecute(dataPoints);
+/*
+            LineGraphSeries<DataPoint> averagePainSeries = new LineGraphSeries<>();
+            LineGraphSeries<DataPoint> averageJointSeries = new LineGraphSeries<>();
+            PointsGraphSeries<DataPoint> painSeries = new PointsGraphSeries<>();
+            PointsGraphSeries<DataPoint> jointSeries = new PointsGraphSeries<>();
+            BarGraphSeries<DataPoint> timeOfDayDis = new BarGraphSeries<>();
+
+            averagePainSeries = formatSeries(averagePainSeries);
+            averageJointSeries = formatSeries(averageJointSeries);
+
+            painSeries.setColor(Color.rgb(193, 54, 54));
+            jointSeries.setColor(Color.rgb(89, 193, 48));
+
+            for (GraphData p : dataPoints
+                 ) {
+                Date date = p.getDate();
+                int painLevel = p.getLevels();
+                int jointCount = p.getNumberOfJoints();
+
+                DataPoint dataPoint = new DataPoint(date, (double) painLevel);
+
+                painSeries.appendData(new DataPoint(date, (double)painLevel), true, 5);
+
+
+            }
+        }
+        private LineGraphSeries<DataPoint> formatSeries(LineGraphSeries<DataPoint> series){
+            series.setDrawDataPoints(false);
+            series.setThickness(8);
+
+            return series;
+        }
+        private PointsGraphSeries<DataPoint> formatSeries(PointsGraphSeries<DataPoint> series){
+            series.setSize(10);
+
+
+            return series;
+        }*/
         }
     }
 }

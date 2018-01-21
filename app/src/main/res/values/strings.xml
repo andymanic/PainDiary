@@ -5,4 +5,6 @@
     <string name="create_entry">Create entry</string>
     <string name="view_entries">View entries</string>
     <string name="view_graphs">View Graphs</string>
+    <string name="setBtn">Set Notifications</string>
+    <string name="view_settings">Settings</string>
 </resources>
