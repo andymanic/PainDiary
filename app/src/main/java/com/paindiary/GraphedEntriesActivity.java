@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.ScatterChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -208,6 +209,10 @@ public class GraphedEntriesActivity extends AppCompatActivity {
 
             _painDataSet.setColor(Color.BLACK);
             _jointDataSet.setColor(Color.BLACK);
+            _painDataSet.setDrawValues(false);
+            _jointDataSet.setDrawValues(false);
+            _painDataSet.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+            _jointDataSet.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
 
 
             PartOfDayDistribution mergeDist = new PartOfDayDistribution();
